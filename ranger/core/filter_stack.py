@@ -275,3 +275,21 @@ class NotFilter(BaseFilter):
 
     def decompose(self):
         return [self.subfilter]
+
+
+@stack_filter("tag")
+class TagFilter(BaseFilter, FileManagerAware):
+    def __init__(self, tag=None):
+        self.tag = tag
+
+    def __call__(self, fobj):
+        if not self.fm.tags:
+            return False
+        try:
+            tag = self.fm.tags.tags[fobj.realpath]
+        except KeyError:
+            return False
+        return not self.tag or self.tag == tag
+
+    def __str__(self):
+        return "<Filter: tag {tag}>".format(tag=self.tag)
