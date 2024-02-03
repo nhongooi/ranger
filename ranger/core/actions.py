@@ -1261,7 +1261,11 @@ class Actions(  # pylint: disable=too-many-instance-attributes,too-many-public-m
     def tabopen(self, *args, **kwargs):
         return self.tab_open(*args, **kwargs)
 
-    def tab_close(self, name=None):
+    def tab_close(self, name=None, is_all=False):
+        if is_all is True:
+            for tab in reversed(self.get_tab_list()):
+                self.tab_close(tab)
+            return
         if name is None:
             name = self.current_tab
         tab = self.tabs[name]
@@ -1297,13 +1301,15 @@ class Actions(  # pylint: disable=too-many-instance-attributes,too-many-public-m
     def tabrestore(self, *args, **kwargs):
         return self.tab_restore(*args, **kwargs)
 
-    def tab_move(self, offset, narg=None):
+    def tab_move(self, offset, narg=None, is_bound=False):
         if narg:
             return self.tab_open(narg)
         assert isinstance(offset, int)
         tablist = self.get_tab_list()
-        current_index = tablist.index(self.current_tab)
-        newtab = tablist[(current_index + offset) % len(tablist)]
+        if is_bound is True:
+            newtab = tablist[-1 if offset > 0 else 0]
+        else:
+            newtab = tablist[(tablist.index(self.current_tab) + offset) % len(tablist)]
         if newtab != self.current_tab:
             self.tab_open(newtab)
         return None
