@@ -43,6 +43,7 @@ options: help
 help:
 	@echo 'make:                 Test and compile ranger.'
 	@echo 'make install:         Install $(NAME)'
+	@echo 'make install_user:    Install $(NAME)'
 	@echo 'make pypi_sdist:      Release a new sdist to PyPI'
 	@echo 'make clean:           Remove the compiled files (*.pyc, *.pyo)'
 	@echo 'make doc:             Create the pydoc documentation'
@@ -64,7 +65,10 @@ install:
 	$(PYTHON) setup.py install $(SETUPOPTS) \
 		'--prefix=$(PREFIX)' '--root=$(DESTDIR)' \
 		--optimize=$(PYOPTIMIZE)
-
+install_user:
+	$(PYTHON) setup.py install $(SETUPOPTS) \
+		--user \
+		--optimize=$(PYOPTIMIZE)
 compile: clean
 	PYTHONOPTIMIZE=$(PYOPTIMIZE) $(PYTHON) -m compileall -q ranger
 
